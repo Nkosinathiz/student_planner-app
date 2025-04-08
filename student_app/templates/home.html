@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Planner Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; padding: 0; background-color: #f4f4f4; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); text-align: center; }
+        h1 { text-align: center; }
+        .navbar { background: #007bff; padding: 10px; text-align: center; }
+        .navbar a { color: white; margin: 0 15px; text-decoration: none; font-size: 18px; }
+        .task-list { list-style: none; padding: 0; text-align: left; }
+        .task { padding: 10px; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; }
+        .urgent { color: red; font-weight: bold; }
+        .add-task { margin-top: 20px; }
+        button { padding: 10px; background: blue; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .calendar { margin-top: 20px; text-align: center; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+        th { background: #007bff; color: white; }
+        .current-time { text-align: center; margin-top: 20px; font-size: 18px; }
+        .task-form { display: none; margin: 20px auto; padding: 15px; background: #fff; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); max-width: 400px; text-align: center; }
+        .task-form input { width: 90%; padding: 8px; margin: 5px 0; }
+        .diary { margin-top: 30px; padding: 15px; background: white; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+        .diary textarea { width: 100%; height: 100px; padding: 10px; }
+        .footer { margin-top: 30px; padding: 10px; background: #007bff; color: white; text-align: center; border-radius: 5px; }
+    </style>
+    <script>
+        function updateTime() {
+            const now = new Date();
+            document.getElementById("current-time").innerText = "Current Time: " + now.toLocaleString();
+        }
+        setInterval(updateTime, 1000);
+
+        function showTaskForm() {
+            document.getElementById("task-form").style.display = "block";
+        }
+
+        function addTask() {
+            const taskName = document.getElementById("task-name").value;
+            const taskDue = document.getElementById("task-due").value;
+            const taskTime = document.getElementById("task-time").value;
+            if (taskName && taskDue) {
+                const taskList = document.querySelector(".task-list");
+                const newTask = document.createElement("li");
+                newTask.classList.add("task");
+                newTask.innerHTML = `${taskName} <span>Due: ${taskDue} ${taskTime ? "at " + taskTime : ""}</span>`;
+                taskList.appendChild(newTask);
+                document.getElementById("task-form").style.display = "none";
+                document.getElementById("task-name").value = "";
+                document.getElementById("task-due").value = "";
+                document.getElementById("task-time").value = "";
+            }
+        }
+    </script>
+</head>
+<body onload="updateTime()">
+    <div class="navbar">
+        <a href="#">Home</a>
+        <a href="{% url 'notes' %}">Notes</a>
+        <a href="#">About Us</a>
+        <a href="#">Contact Us</a>
+    </div>
+    <div class="container">
+        <h1>Study Planner Dashboard</h1>
+        <div class="current-time" id="current-time"></div>
+        <h3>Upcoming Tasks</h3>
+        <ul class="task-list">
+            <li class="task">Math Homework <span class="urgent">Due: April 2, 2025</span></li>
+            <li class="task">Science Project <span>Due: April 4, 2025</span></li>
+            <li class="task">Read Chapter 5 <span>Due: April 6, 2025</span></li>
+        </ul>
+        <div class="add-task">
+            <button onclick="showTaskForm()">+ Add Task</button>
+        </div>
+        <div class="task-form" id="task-form">
+            <h3>Add New Task</h3>
+            <label for="task-name">Task Name:</label>
+            <input type="text" id="task-name" required>
+            <br>
+            <label for="task-due">Due Date:</label>
+            <input type="date" id="task-due" required>
+            <br>
+            <label for="task-time">Due Time (Optional):</label>
+            <input type="time" id="task-time">
+            <br>
+            <button onclick="addTask()">Add</button>
+        </div>
+        <div class="calendar">
+            <h3>Weekly Calendar</h3>
+            <table>
+                <tr>
+                    <th>Monday</th>
+                    <th>Tuesday</th>
+                    <th>Wednesday</th>
+                    <th>Thursday</th>
+                    <th>Friday</th>
+                    <th>Saturday</th>
+                    <th>Sunday</th>
+                </tr>
+                <tr>
+                    <td>Math Homework</td>
+                    <td>Science Project</td>
+                    <td></td>
+                    <td>Read Chapter 5</td>
+                    <td></td>
+                    <td>Study Group</td>
+                    <td>Rest</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="footer">
+        &copy; 2025 Study Planner. All rights reserved.
+    </div>
+</body>
+</html>
