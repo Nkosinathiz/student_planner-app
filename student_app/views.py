@@ -9,3 +9,7 @@ def home(request):
 def notes(request):
     context = {}
     return render(request, 'notes.html', context)
+
+def about(request):
+    context = {}
+    return render(request, 'about.html', context)

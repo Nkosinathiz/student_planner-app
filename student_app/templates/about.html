@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f8f9fa; margin: 0; padding: 0; }
+        .navbar { background: #007bff; padding: 10px; text-align: center; }
+        .navbar a { color: white; margin: 0 15px; text-decoration: none; font-size: 18px; }
+        .container { max-width: 800px; margin: 40px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #333; }
+        p { font-size: 18px; line-height: 1.6; color: #555; }
+        .footer { background-color: #007bff; color: white; text-align: center; padding: 10px; position: relative; bottom: 0; width: 100%; margin-top: 40px; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="{% url 'home' %}">home</a>
+        <a href="{% url 'notes' %}">Notes</a>
+        <a href="contact.html">Contact Us</a>
+        <a href="contact.html">Logout</a>
+    </div>
+    <div class="container">
+        <h1>About Us</h1>
+        <p>Welcome to Study Planner — a simple, student-friendly platform built to help you organize your academic life and mental well-being. Our goal is to empower students to manage assignments, schedules, and wellness in one space, reducing stress and improving productivity.</p>
+        <p>Whether you’re tracking deadlines, setting up a study plan, or writing your thoughts in a diary, we’re here to support your journey. Let’s study smarter, not harder.</p>
+        <p><strong>Built with 'LOVE' for students, by students.</strong></p>
+    </div>
+
+    <div class="footer">
+        &copy; 2025 Study Planner. All rights reserved.
+    </div>
+</body>
+</html>

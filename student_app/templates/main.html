@@ -1,1 +1,36 @@
-<h3>MAIN</h3>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block meta %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% endblock %}
+    
+    <title>{% block title %}Default Title{% endblock %}</title>
+    
+    {% block styles %}
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f8f9fa; margin: 0; padding: 0; }
+        .navbar { background: #007bff; padding: 10px; text-align: center; }
+        .navbar a { color: white; margin: 0 15px; text-decoration: none; font-size: 18px; }
+        .container { max-width: 800px; margin: 40px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #333; }
+        p { font-size: 18px; line-height: 1.6; color: #555; }
+    </style>
+    {% endblock %}
+</head>
+<body>
+    {% block navbar %}
+    <div class="navbar">
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'diary' %}">Diary</a>
+        <a href="{% url 'about' %}">About Us</a>
+        <a href="{% url 'contact' %}">Contact Us</a>
+    </div>
+    {% endblock %}
+    
+    {% block content %}
+    
+    {% endblock %}
+</body>
+</html>

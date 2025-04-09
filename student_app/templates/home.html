@@ -38,29 +38,38 @@
         }
 
         function addTask() {
-            const taskName = document.getElementById("task-name").value;
-            const taskDue = document.getElementById("task-due").value;
+            const taskName = document.getElementById("task-name").value.trim();
+            const taskDue = document.getElementById("task-due").value.trim();
             const taskTime = document.getElementById("task-time").value;
-            if (taskName && taskDue) {
-                const taskList = document.querySelector(".task-list");
-                const newTask = document.createElement("li");
-                newTask.classList.add("task");
-                newTask.innerHTML = `${taskName} <span>Due: ${taskDue} ${taskTime ? "at " + taskTime : ""}</span>`;
-                taskList.appendChild(newTask);
-                document.getElementById("task-form").style.display = "none";
-                document.getElementById("task-name").value = "";
-                document.getElementById("task-due").value = "";
-                document.getElementById("task-time").value = "";
+            const feedback = document.getElementById("task-feedback");
+
+            if (!taskName || !taskDue) {
+                feedback.textContent = "Please enter both task name and due date.";
+                feedback.style.display = "block";
+                setTimeout(() => { feedback.style.display = "none"; }, 3000);
+                return;
             }
+
+            const taskList = document.querySelector(".task-list");
+            const newTask = document.createElement("li");
+            newTask.classList.add("task");
+            newTask.innerHTML = `${taskName} <span>Due: ${taskDue}${taskTime ? " at " + taskTime : ""}</span>`;
+            taskList.appendChild(newTask);
+
+            document.getElementById("task-form").style.display = "none";
+            document.getElementById("task-name").value = "";
+            document.getElementById("task-due").value = "";
+            document.getElementById("task-time").value = "";
         }
     </script>
 </head>
 <body onload="updateTime()">
     <div class="navbar">
-        <a href="#">Home</a>
+        <a href="{% url 'home' %}">Home</a>
         <a href="{% url 'notes' %}">Notes</a>
-        <a href="#">About Us</a>
-        <a href="#">Contact Us</a>
+        <a href="{% url 'about' %}">About Us</a>
+        <a href="contact.html">Contact Us</a>
+        <a href="contact.html">Logout</a>
     </div>
     <div class="container">
         <h1>Study Planner Dashboard</h1>
@@ -77,14 +86,15 @@
         <div class="task-form" id="task-form">
             <h3>Add New Task</h3>
             <label for="task-name">Task Name:</label>
-            <input type="text" id="task-name" required>
+            <input type="text" id="task-name">
             <br>
             <label for="task-due">Due Date:</label>
-            <input type="date" id="task-due" required>
+            <input type="date" id="task-due">
             <br>
             <label for="task-time">Due Time (Optional):</label>
             <input type="time" id="task-time">
             <br>
+            <div id="task-feedback" style="color: red; font-size: 14px; display: none; margin-top: 5px;"></div>
             <button onclick="addTask()">Add</button>
         </div>
         <div class="calendar">
