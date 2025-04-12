@@ -1,128 +1,278 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Study Planner Dashboard</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; padding: 0; background-color: #f4f4f4; }
-        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); text-align: center; }
-        h1 { text-align: center; }
-        .navbar { background: #007bff; padding: 10px; text-align: center; }
-        .navbar a { color: white; margin: 0 15px; text-decoration: none; font-size: 18px; }
-        .task-list { list-style: none; padding: 0; text-align: left; }
-        .task { padding: 10px; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; }
-        .urgent { color: red; font-weight: bold; }
-        .add-task { margin-top: 20px; }
-        button { padding: 10px; background: blue; color: white; border: none; border-radius: 5px; cursor: pointer; }
-        .calendar { margin-top: 20px; text-align: center; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
-        th { background: #007bff; color: white; }
-        .current-time { text-align: center; margin-top: 20px; font-size: 18px; }
-        .task-form { display: none; margin: 20px auto; padding: 15px; background: #fff; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); max-width: 400px; text-align: center; }
-        .task-form input { width: 90%; padding: 8px; margin: 5px 0; }
-        .diary { margin-top: 30px; padding: 15px; background: white; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
-        .diary textarea { width: 100%; height: 100px; padding: 10px; }
-        .footer { margin-top: 30px; padding: 10px; background: #007bff; color: white; text-align: center; border-radius: 5px; }
-    </style>
-    <script>
-        function updateTime() {
-            const now = new Date();
-            document.getElementById("current-time").innerText = "Current Time: " + now.toLocaleString();
-        }
-        setInterval(updateTime, 1000);
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Study Planner Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    :root {
+      --accent: #6366f1;
+      --secondary: #ec4899;
+      --bg: #f3f4f6;
+      --card-bg: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+    }
 
-        function showTaskForm() {
-            document.getElementById("task-form").style.display = "block";
-        }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen;
+      background: #f3f4f6;
+      color: var(--text);
+    }
 
-        function addTask() {
-            const taskName = document.getElementById("task-name").value.trim();
-            const taskDue = document.getElementById("task-due").value.trim();
-            const taskTime = document.getElementById("task-time").value;
-            const feedback = document.getElementById("task-feedback");
+    .navbar {
+      background: var(--card-bg);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
 
-            if (!taskName || !taskDue) {
-                feedback.textContent = "Please enter both task name and due date.";
-                feedback.style.display = "block";
-                setTimeout(() => { feedback.style.display = "none"; }, 3000);
-                return;
-            }
+    .navbar a {
+      text-decoration: none;
+      color: var(--text);
+      margin: 0 1rem;
+      font-weight: 600;
+    }
 
-            const taskList = document.querySelector(".task-list");
-            const newTask = document.createElement("li");
-            newTask.classList.add("task");
-            newTask.innerHTML = `${taskName} <span>Due: ${taskDue}${taskTime ? " at " + taskTime : ""}</span>`;
-            taskList.appendChild(newTask);
+    .navbar a:hover {
+      color: var(--accent);
+    }
 
-            document.getElementById("task-form").style.display = "none";
-            document.getElementById("task-name").value = "";
-            document.getElementById("task-due").value = "";
-            document.getElementById("task-time").value = "";
-        }
-    </script>
+    .container {
+      max-width: 950px;
+      margin: 2rem auto;
+      background: var(--card-bg);
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    h1, h3 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .current-time {
+      text-align: center;
+      color: var(--muted);
+      margin-bottom: 2rem;
+    }
+
+    .task-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .task {
+      background-color: #fef9ff;
+      border: 1px solid var(--border);
+      border-left: 6px solid var(--accent);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+
+    .task:hover {
+      background-color: #e0e7ff;
+      transform: scale(1.02);
+    }
+
+    .urgent {
+      color: #ef4444;
+      font-weight: bold;
+    }
+
+    .add-task button {
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .add-task button:hover {
+      background: #4338ca;
+    }
+
+    .task-form {
+      display: none;
+      margin-top: 2rem;
+      padding: 1.5rem;
+      border-radius: 12px;
+      background: #f3f4f6;
+      border: 1px solid var(--border);
+    }
+
+    .task-form input {
+      width: 90%;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 1rem;
+    }
+
+    .task-form button {
+      background: var(--secondary);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .task-form button:hover {
+      background: #db2777;
+    }
+
+    .calendar {
+      margin-top: 3rem;
+      background-color: #e0e7ff;
+      border-radius: 16px;
+      padding: 1rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      border: 1px solid var(--border);
+      padding: 1rem;
+      text-align: center;
+    }
+
+    th {
+      background: var(--accent);
+      color: white;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 1rem;
+      background: var(--card-bg);
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-top: 2rem;
+      border-top: 1px solid var(--border);
+    }
+  </style>
 </head>
 <body onload="updateTime()">
-    <div class="navbar">
-        <a href="{% url 'home' %}">Home</a>
-        <a href="{% url 'notes' %}">Notes</a>
-        <a href="{% url 'about' %}">About Us</a>
-        <a href="contact.html">Contact Us</a>
-        <a href="contact.html">Logout</a>
+  <div class="navbar">
+    <div><strong>Study Planner</strong></div>
+    <div>
+      <a href="#">Dashboard</a>
+      <a href="{% url 'notes' %}">Notes</a>
+      <a href="{% url 'about' %}">About Us</a>
+      <a href="#">Contact Us</a>
     </div>
-    <div class="container">
-        <h1>Study Planner Dashboard</h1>
-        <div class="current-time" id="current-time"></div>
-        <h3>Upcoming Tasks</h3>
-        <ul class="task-list">
-            <li class="task">Math Homework <span class="urgent">Due: April 2, 2025</span></li>
-            <li class="task">Science Project <span>Due: April 4, 2025</span></li>
-            <li class="task">Read Chapter 5 <span>Due: April 6, 2025</span></li>
-        </ul>
-        <div class="add-task">
-            <button onclick="showTaskForm()">+ Add Task</button>
-        </div>
-        <div class="task-form" id="task-form">
-            <h3>Add New Task</h3>
-            <label for="task-name">Task Name:</label>
-            <input type="text" id="task-name">
-            <br>
-            <label for="task-due">Due Date:</label>
-            <input type="date" id="task-due">
-            <br>
-            <label for="task-time">Due Time (Optional):</label>
-            <input type="time" id="task-time">
-            <br>
-            <div id="task-feedback" style="color: red; font-size: 14px; display: none; margin-top: 5px;"></div>
-            <button onclick="addTask()">Add</button>
-        </div>
-        <div class="calendar">
-            <h3>Weekly Calendar</h3>
-            <table>
-                <tr>
-                    <th>Monday</th>
-                    <th>Tuesday</th>
-                    <th>Wednesday</th>
-                    <th>Thursday</th>
-                    <th>Friday</th>
-                    <th>Saturday</th>
-                    <th>Sunday</th>
-                </tr>
-                <tr>
-                    <td>Math Homework</td>
-                    <td>Science Project</td>
-                    <td></td>
-                    <td>Read Chapter 5</td>
-                    <td></td>
-                    <td>Study Group</td>
-                    <td>Rest</td>
-                </tr>
-            </table>
-        </div>
+  </div>
+
+  <div class="container">
+    <h1>Welcome Back 👋</h1>
+    <div class="current-time" id="time"></div>
+
+    <div class="add-task">
+      <button onclick="document.querySelector('.task-form').style.display='block'">+ Add Task</button>
     </div>
-    <div class="footer">
-        &copy; 2025 Study Planner. All rights reserved.
+
+    <div class="task-form">
+      <input type="text" id="taskInput" placeholder="Enter your task" />
+      <input type="date" id="taskDate" />
+      <input type="time" id="taskTime" />
+      <button onclick="addTask()">Save Task</button>
     </div>
+
+    <ul class="task-list" id="taskList"></ul>
+
+    <div class="calendar">
+      <h3>Weekly Calendar</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Monday</th>
+            <th>Tuesday</th>
+            <th>Wednesday</th>
+            <th>Thursday</th>
+            <th>Friday</th>
+            <th>Saturday</th>
+            <th>Sunday</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td id="Mon"></td>
+            <td id="Tue"></td>
+            <td id="Wed"></td>
+            <td id="Thu"></td>
+            <td id="Fri"></td>
+            <td id="Sat"></td>
+            <td id="Sun"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="footer">
+    &copy; 2025 Study Planner. All rights reserved.
+  </div>
+
+  <script>
+    function updateTime() {
+      const now = new Date();
+      document.getElementById("time").textContent = `Current time: ${now.toLocaleTimeString()}`;
+    }
+
+    function addTask() {
+      const input = document.getElementById("taskInput");
+      const date = document.getElementById("taskDate");
+      const time = document.getElementById("taskTime");
+
+      if (!input.value.trim()) {
+        alert("Please enter a task name.");
+        return;
+      }
+
+      if (!date.value) {
+        alert("Please select a due date.");
+        return;
+      }
+
+      const taskItem = document.createElement("li");
+      taskItem.className = "task";
+      taskItem.innerHTML = `
+        <span>${input.value}</span>
+        <span class="urgent">${date.value}${time.value ? ' @ ' + time.value : ''}</span>
+      `;
+      document.getElementById("taskList").appendChild(taskItem);
+
+      const dayOfWeek = new Date(date.value).toLocaleDateString("en-US", { weekday: 'short' });
+      const cellId = dayOfWeek.slice(0, 3);
+      const cell = document.getElementById(cellId);
+      if (cell) cell.innerHTML += `<div>${input.value}${time.value ? ' @ ' + time.value : ''}</div>`;
+
+      input.value = "";
+      date.value = "";
+      time.value = "";
+      document.querySelector('.task-form').style.display = 'none';
+    }
+  </script>
 </body>
 </html>

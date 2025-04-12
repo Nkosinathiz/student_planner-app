@@ -1,83 +1,203 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diary Notes</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; padding: 0; background-color: #f4f4f4; }
-        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); text-align: center; }
-        h1 { text-align: center; }
-        .navbar { background: #007bff; padding: 10px; text-align: center; }
-        .navbar a { color: white; margin: 0 15px; text-decoration: none; font-size: 18px; }
-        .diary { margin-top: 30px; padding: 15px; background: white; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
-        .diary textarea { width: 100%; height: 200px; padding: 10px; font-size: 16px; }
-        .save-button { margin-top: 10px; padding: 10px; background: blue; color: white; border: none; border-radius: 5px; cursor: pointer; }
-        .notes-section { margin-top: 30px; text-align: left; }
-        .note { background: #e9ecef; padding: 10px; margin-bottom: 10px; border-radius: 5px; }
-        .note-date { font-size: 0.9em; color: #555; margin-bottom: 5px; display: block; }
-        .feedback { color: green; font-size: 14px; margin-top: 10px; display: none; }
-        .feedback.error { color: red; }
-        .footer { margin-top: 30px; padding: 10px; background: #007bff; color: white; text-align: center; border-radius: 5px; }
-    </style>
-    <script>
-        function saveNote() {
-            const textarea = document.querySelector(".diary textarea");
-            const notesSection = document.getElementById("notes-section");
-            const feedback = document.getElementById("feedback-message");
-            const noteText = textarea.value.trim();
-            if (noteText) {
-                const newNote = document.createElement("div");
-                newNote.className = "note";
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Diary Notes</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    :root {
+      --accent: #6366f1;
+      --secondary: #ec4899;
+      --bg: linear-gradient(to right, #f0f4ff, #fdf2f8);
+      --card-bg: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+    }
 
-                const dateSpan = document.createElement("span");
-                dateSpan.className = "note-date";
-                dateSpan.textContent = new Date().toLocaleString();
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen;
+      background: var(--bg);
+      color: var(--text);
+    }
 
-                const noteContent = document.createElement("div");
-                noteContent.textContent = noteText;
+    .navbar {
+      background: var(--card-bg);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
 
-                newNote.appendChild(dateSpan);
-                newNote.appendChild(noteContent);
-                notesSection.prepend(newNote);
+    .navbar a {
+      text-decoration: none;
+      color: var(--text);
+      margin: 0 1rem;
+      font-weight: 600;
+    }
 
-                textarea.value = "";
+    .navbar a:hover {
+      color: var(--accent);
+    }
 
-                feedback.textContent = "Note saved successfully!";
-                feedback.style.display = "block";
-                setTimeout(() => feedback.style.display = "none", 3000);
-            } else {
-                feedback.textContent = "Please write something before saving.";
-                feedback.className = "feedback error";
-                feedback.style.display = "block";
-                setTimeout(() => feedback.style.display = "none", 3000);
-            }
-        }
-    </script>
+    .container {
+      max-width: 900px;
+      margin: 2rem auto;
+      background: var(--card-bg);
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    h1, h3 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: var(--accent);
+    }
+
+    .diary textarea {
+      width: 100%;
+      height: 200px;
+      padding: 1rem;
+      font-size: 16px;
+      border-radius: 12px;
+      border: 2px solid #3b82f6;
+      background: #f9fafb;
+    }
+
+    .save-button {
+      margin-top: 1rem;
+      padding: 0.75rem 1.5rem;
+      background: var(--secondary);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .save-button:hover {
+      background: #db2777;
+    }
+
+    .notes-section {
+      margin-top: 2rem;
+    }
+
+    .note {
+      background: #fef9ff;
+      border-left: 6px solid var(--accent);
+      padding: 1rem;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      transition: transform 0.2s ease;
+    }
+
+    .note:hover {
+      transform: scale(1.02);
+    }
+
+    .note-date {
+      font-size: 0.9em;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .feedback {
+      font-size: 14px;
+      margin-top: 10px;
+      display: none;
+    }
+
+    .feedback.success {
+      color: green;
+    }
+
+    .feedback.error {
+      color: red;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 1rem;
+      background: var(--card-bg);
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-top: 2rem;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+  <script>
+    function saveNote() {
+      const textarea = document.querySelector(".diary textarea");
+      const notesSection = document.getElementById("notes-section");
+      const feedback = document.getElementById("feedback-message");
+      const noteText = textarea.value.trim();
+      if (noteText) {
+        const newNote = document.createElement("div");
+        newNote.className = "note";
+
+        const dateSpan = document.createElement("span");
+        dateSpan.className = "note-date";
+        dateSpan.textContent = new Date().toLocaleString();
+
+        const noteContent = document.createElement("div");
+        noteContent.textContent = noteText;
+
+        newNote.appendChild(dateSpan);
+        newNote.appendChild(noteContent);
+        notesSection.prepend(newNote);
+
+        textarea.value = "";
+
+        feedback.textContent = "Note saved successfully!";
+        feedback.className = "feedback success";
+        feedback.style.display = "block";
+        setTimeout(() => feedback.style.display = "none", 3000);
+      } else {
+        feedback.textContent = "Please write something before saving.";
+        feedback.className = "feedback error";
+        feedback.style.display = "block";
+        setTimeout(() => feedback.style.display = "none", 3000);
+      }
+    }
+  </script>
 </head>
 <body>
-    <div class="navbar">
-        <a href="{% url 'home' %}">Home</a>
+  <div class="navbar">
+    <div><strong>Study Planner</strong></div>
+    <div>
+        <a href="{% url 'home' %}">Dashboard</a>
+
         <a href="{% url 'about' %}">About Us</a>
-        <a href="contact.html">Contact Us</a>
-        <a href="contact.html">Logout</a>
+        <a href="">Contact Us</a>
+        <a href="">Logout</a>
+     
     </div>
-    <div class="container">
-        <h1>Diary Notes</h1>
-        <div class="diary">
-            <h3>Write Your Notes</h3>
-            <textarea placeholder="Write your thoughts here..."></textarea>
-            <br>
-            <button class="save-button" onclick="saveNote()">Save Note</button>
-            <div id="feedback-message" class="feedback">Note saved successfully!</div>
-        </div>
-        <h3>Your Saved Notes</h3>
-        <div id="notes-section" class="notes-section">
-            
-        </div>
+  </div>
+  <div class="container">
+    <h1>Diary Notes</h1>
+    <div class="diary">
+      <textarea placeholder="Write your thoughts here..."></textarea>
+      <br>
+      <button class="save-button" onclick="saveNote()">Save Note</button>
+      <div id="feedback-message" class="feedback"></div>
     </div>
-    <div class="footer">
-        &copy; 2025 Study Planner. All rights reserved.
+    <div id="notes-section" class="notes-section">
+      <h3>Your Saved Notes</h3>
     </div>
+  </div>
+  <div class="footer">
+    &copy; 2025 Study Planner. All rights reserved.
+  </div>
 </body>
 </html>
