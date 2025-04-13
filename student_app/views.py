@@ -6,6 +6,10 @@ def home(request):
     context = {}
     return render(request, 'home.html', context)
 
+def schedule(request):
+    context = {}
+    return render(request, 'schedule.html', context)    
+
 def notes(request):
     context = {}
     return render(request, 'notes.html', context)

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Schedule</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #7b5cfa;
+      --highlight: #f5f3ff;
+      --background: #f9f9fb;
+      --text: #1f2937;
+      --border: #e0e7ff;
+      --muted: #6b7280;
+      --accent: #e0eaff;
+      --light-blue: #E2F0FF;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto;
+      background: var(--background);
+      color: var(--text);
+      display: flex;
+    }
+
+    .sidebar {
+      width: 240px;
+      background: var(--highlight);
+      height: 100vh;
+      padding: 2rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      border-right: 1px solid var(--border);
+      position: fixed;
+    }
+
+    .sidebar h2 {
+      font-size: 1.5rem;
+      color: var(--primary);
+      text-align: center;
+    }
+
+    .sidebar a {
+      text-decoration: none;
+      color: var(--text);
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      transition: background 0.3s;
+      font-weight: 500;
+    }
+
+    .sidebar a:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    .main {
+      margin-left: 260px;
+      padding: 2rem;
+      flex: 1;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .header h1 {
+      color: var(--primary);
+    }
+
+    .footer {
+      position: fixed;
+      bottom: 0;
+      left: 240px;
+      right: 0;
+      background: var(--light-blue);
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    #calendar {
+      background: white;
+      padding: 1rem;
+      border-radius: 16px;
+      box-shadow: 0 8px 16px rgba(123, 92, 250, 0.05);
+      border: 1px solid var(--border);
+    }
+
+    .fc-daygrid-day {
+      transition: background-color 0.3s;
+    }
+
+    .fc-daygrid-day:hover {
+      background-color: var(--light-blue);
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h2>Study Planner</h2>
+    
+    <a href="{% url 'home' %}">Dashboard</a>
+    <a href="{% url 'schedule' %}">Schedule</a>
+    <a href="{% url 'notes' %}">Notes</a>
+    <a href="{% url 'about' %}">About Us</a>
+
+  </div>
+
+  <div class="main">
+    <div class="header">
+      <h1>Schedule</h1>
+      <button style="background: var(--primary); color: white; border: none; border-radius: 10px; padding: 0.6rem 1.2rem; cursor: pointer;">+ Add</button>
+    </div>
+    <div id="calendar"></div>
+  </div>
+
+  <div class="footer">
+    &copy; 2025 Study Planner. All rights reserved.
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+  <script>
+    const dashboardTasks = JSON.parse(localStorage.getItem("taskList") || "[]");
+
+    document.addEventListener('DOMContentLoaded', function () {
+      var calendarEl = document.getElementById('calendar');
+      var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        events: [
+          { title: 'Prepare KKN', start: '2025-01-05', color: '#ffd6d6' },
+          { title: 'Presentation 08:00', start: '2025-01-09', color: '#e6e6ff' },
+          { title: 'Classroom 10:00', start: '2025-01-11', color: '#fff6cc' },
+          { title: 'Start Intern', start: '2025-01-13', color: '#ffd6d6' },
+          { title: 'Team 10:00', start: '2025-01-14', color: '#e6e6ff' },
+          ...dashboardTasks.map(task => ({
+            title: task.name + (task.time ? ` ${task.time}` : ""),
+            start: task.date,
+            color: '#ccf2ff'
+          }))
+        ]
+      });
+      calendar.render();
+    });
+  </script>
+</body>
+</html>
