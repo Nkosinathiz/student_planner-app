@@ -1,279 +1,545 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Study Planner Dashboard</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <style>
-    :root {
-      --accent: #6366f1;
-      --secondary: #ec4899;
-      --bg: #f3f4f6;
-      --card-bg: #ffffff;
-      --text: #1f2937;
-      --muted: #6b7280;
-      --border: #e5e7eb;
-    }
-
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen;
-      background: #f3f4f6;
-      color: var(--text);
-    }
-
-    .navbar {
-      background: var(--card-bg);
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-
-    .navbar a {
-      text-decoration: none;
-      color: var(--text);
-      margin: 0 1rem;
-      font-weight: 600;
-    }
-
-    .navbar a:hover {
-      color: var(--accent);
-    }
-
-    .container {
-      max-width: 950px;
-      margin: 2rem auto;
-      background: var(--card-bg);
-      padding: 2rem;
-      border-radius: 20px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-    }
-
-    h1, h3 {
-      text-align: center;
-      margin-bottom: 1.5rem;
-    }
-
-    .current-time {
-      text-align: center;
-      color: var(--muted);
-      margin-bottom: 2rem;
-    }
-
-    .task-list {
-      list-style: none;
-      padding: 0;
-    }
-
-    .task {
-      background-color: #fef9ff;
-      border: 1px solid var(--border);
-      border-left: 6px solid var(--accent);
-      border-radius: 12px;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      display: flex;
-      justify-content: space-between;
-      transition: background-color 0.3s, transform 0.3s;
-    }
-
-    .task:hover {
-      background-color: #e0e7ff;
-      transform: scale(1.02);
-    }
-
-    .urgent {
-      color: #ef4444;
-      font-weight: bold;
-    }
-
-    .add-task button {
-      background: var(--accent);
-      color: white;
-      border: none;
-      border-radius: 12px;
-      padding: 0.75rem 1.5rem;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-
-    .add-task button:hover {
-      background: #4338ca;
-    }
-
-    .task-form {
-      display: none;
-      margin-top: 2rem;
-      padding: 1.5rem;
-      border-radius: 12px;
-      background: #f3f4f6;
-      border: 1px solid var(--border);
-    }
-
-    .task-form input {
-      width: 90%;
-      padding: 0.75rem;
-      margin-bottom: 1rem;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      font-size: 1rem;
-    }
-
-    .task-form button {
-      background: var(--secondary);
-      color: white;
-      border: none;
-      border-radius: 10px;
-      padding: 0.75rem 1.5rem;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-
-    .task-form button:hover {
-      background: #db2777;
-    }
-
-    .calendar {
-      margin-top: 3rem;
-      background-color: #e0e7ff;
-      border-radius: 16px;
-      padding: 1rem;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    th, td {
-      border: 1px solid var(--border);
-      padding: 1rem;
-      text-align: center;
-    }
-
-    th {
-      background: var(--accent);
-      color: white;
-    }
-
-    .footer {
-      text-align: center;
-      padding: 1rem;
-      background: var(--card-bg);
-      color: var(--muted);
-      font-size: 0.9rem;
-      margin-top: 2rem;
-      border-top: 1px solid var(--border);
-    }
-  </style>
-</head>
-<body onload="updateTime()">
-  <div class="navbar">
-    <div><strong>Study Planner</strong></div>
-    <div>
-      <a href="#">Dashboard</a>
-      <a href="{% url 'schedule' %}">Schedule</a>
-      <a href="{% url 'notes' %}">Notes</a>
-      <a href="{% url 'about' %}">About Us</a>
-      <a href="#">Contact Us</a>
-    </div>
-  </div>
-
-  <div class="container">
-    <h1>Welcome Back 👋</h1>
-    <div class="current-time" id="time"></div>
-
-    <div class="add-task">
-      <button onclick="document.querySelector('.task-form').style.display='block'">+ Add Task</button>
-    </div>
-
-    <div class="task-form">
-      <input type="text" id="taskInput" placeholder="Enter your task" />
-      <input type="date" id="taskDate" />
-      <input type="time" id="taskTime" />
-      <button onclick="addTask()">Save Task</button>
-    </div>
-
-    <ul class="task-list" id="taskList"></ul>
-
-    <div class="calendar">
-      <h3>Weekly Calendar</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Monday</th>
-            <th>Tuesday</th>
-            <th>Wednesday</th>
-            <th>Thursday</th>
-            <th>Friday</th>
-            <th>Saturday</th>
-            <th>Sunday</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td id="Mon"></td>
-            <td id="Tue"></td>
-            <td id="Wed"></td>
-            <td id="Thu"></td>
-            <td id="Fri"></td>
-            <td id="Sat"></td>
-            <td id="Sun"></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <div class="footer">
-    &copy; 2025 Study Planner. All rights reserved.
-  </div>
-
-  <script>
-    function updateTime() {
-      const now = new Date();
-      document.getElementById("time").textContent = `Current time: ${now.toLocaleTimeString()}`;
-    }
-
-    function addTask() {
-      const input = document.getElementById("taskInput");
-      const date = document.getElementById("taskDate");
-      const time = document.getElementById("taskTime");
-
-      if (!input.value.trim()) {
-        alert("Please enter a task name.");
-        return;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Study Planner Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --accent: #6366f1;
+        --secondary: #ec4899;
+        --bg: #f3f4f6;
+        --card-bg: #ffffff;
+        --text: #1f2937;
+        --muted: #6b7280;
+        --border: #e5e7eb;
       }
 
-      if (!date.value) {
-        alert("Please select a due date.");
-        return;
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen;
+        background: #f3f4f6;
+        color: var(--text);
       }
 
-      const taskItem = document.createElement("li");
-      taskItem.className = "task";
-      taskItem.innerHTML = `
+      .navbar {
+        background: var(--card-bg);
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+
+      .navbar a {
+        text-decoration: none;
+        color: var(--text);
+        margin: 0 1rem;
+        font-weight: 600;
+      }
+
+      .navbar a:hover {
+        color: var(--accent);
+      }
+
+      .container {
+        max-width: 950px;
+        margin: 2rem auto;
+        background: var(--card-bg);
+        padding: 2rem;
+        border-radius: 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      h1,
+      h3 {
+        text-align: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .current-time {
+        text-align: center;
+        color: var(--muted);
+        margin-bottom: 2rem;
+      }
+
+      .task-list {
+        list-style: none;
+        padding: 0;
+      }
+
+      .task {
+        background-color: #fef9ff;
+        border: 1px solid var(--border);
+        border-left: 6px solid var(--accent);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        display: flex;
+        justify-content: space-between;
+        transition: background-color 0.3s, transform 0.3s;
+      }
+
+      .task:hover {
+        background-color: #e0e7ff;
+        transform: scale(1.02);
+      }
+
+      .urgent {
+        color: #ef4444;
+        font-weight: bold;
+      }
+
+      .add-task button {
+        background: var(--accent);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        cursor: pointer;
+      }
+
+      .add-task button:hover {
+        background: #4338ca;
+      }
+
+      .task-form {
+        display: none;
+        margin-top: 2rem;
+        padding: 1.5rem;
+        border-radius: 12px;
+        background: #f3f4f6;
+        border: 1px solid var(--border);
+      }
+
+      .task-form input {
+        width: 90%;
+        padding: 0.75rem;
+        margin-bottom: 1rem;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        font-size: 1rem;
+      }
+
+      .task-form button {
+        background: var(--secondary);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        cursor: pointer;
+      }
+
+      .task-form button:hover {
+        background: #db2777;
+      }
+
+      .calendar {
+        margin-top: 3rem;
+        background-color: #e0e7ff;
+        border-radius: 16px;
+        padding: 1rem;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        border: 1px solid var(--border);
+        padding: 1rem;
+        text-align: center;
+      }
+
+      th {
+        background: var(--accent);
+        color: white;
+      }
+
+      .footer {
+        text-align: center;
+        padding: 1rem;
+        background: var(--card-bg);
+        color: var(--muted);
+        font-size: 0.9rem;
+        margin-top: 2rem;
+        border-top: 1px solid var(--border);
+      }
+
+      /* ChatBot  Assistance */
+
+      .assistant-container {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+      }
+
+      .assistant-button {
+        background: var(--accent);
+        color: white;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s;
+      }
+
+      .assistant-button:hover {
+        transform: scale(1.1);
+      }
+
+      .assistant-chat {
+        display: none;
+        width: 350px;
+        height: 500px;
+        background: var(--card-bg);
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+        flex-direction: column;
+      }
+
+      .assistant-header {
+        background: var(--accent);
+        color: white;
+        padding: 1rem;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .assistant-messages {
+        flex: 1;
+        padding: 1rem;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .message {
+        max-width: 80%;
+        padding: 10px 14px;
+        border-radius: 12px;
+        line-height: 1.4;
+      }
+
+      .assistant-message {
+        background: #e0e7ff;
+        align-self: flex-start;
+        border-bottom-left-radius: 4px;
+      }
+
+      .user-message {
+        background: var(--accent);
+        color: white;
+        align-self: flex-end;
+        border-bottom-right-radius: 4px;
+      }
+
+      .assistant-input {
+        display: flex;
+        padding: 1rem;
+        border-top: 1px solid var(--border);
+      }
+
+      .assistant-input input {
+        flex: 1;
+        padding: 0.75rem;
+        border: 1px solid var(--border);
+        border-radius: 12px 0 0 12px;
+        outline: none;
+      }
+
+      .assistant-input button {
+        background: var(--accent);
+        color: white;
+        border: none;
+        padding: 0 1rem;
+        border-radius: 0 12px 12px 0;
+        cursor: pointer;
+      }
+
+      .quick-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 1rem;
+      }
+
+      .quick-action {
+        background: #e0e7ff;
+        padding: 6px 12px;
+        border-radius: 16px;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      .quick-action:hover {
+        background: #c7d2fe;
+      }
+    </style>
+  </head>
+  <body onload="updateTime()" ; onload="updateTime(); initAssistant()">
+    >
+    <div class="navbar">
+      <div><strong>Study Planner</strong></div>
+      <div>
+        <a href="#">Dashboard</a>
+        <a href="{% url 'schedule' %}">Schedule</a>
+        <a href="{% url 'notes' %}">Notes</a>
+        <a href="{% url 'about' %}">About Us</a>
+        <a href="#">Contact Us</a>
+      </div>
+    </div>
+
+    <div class="container">
+      <h1>Welcome Back 👋</h1>
+      <div class="current-time" id="time"></div>
+
+      <div class="add-task">
+        <button
+          onclick="document.querySelector('.task-form').style.display='block'"
+        >
+          + Add Task
+        </button>
+      </div>
+
+      <div class="task-form">
+        <input type="text" id="taskInput" placeholder="Enter your task" />
+        <input type="date" id="taskDate" />
+        <input type="time" id="taskTime" />
+        <button onclick="addTask()">Save Task</button>
+      </div>
+
+      <ul class="task-list" id="taskList"></ul>
+
+      <div class="calendar">
+        <h3>Weekly Calendar</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Monday</th>
+              <th>Tuesday</th>
+              <th>Wednesday</th>
+              <th>Thursday</th>
+              <th>Friday</th>
+              <th>Saturday</th>
+              <th>Sunday</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td id="Mon"></td>
+              <td id="Tue"></td>
+              <td id="Wed"></td>
+              <td id="Thu"></td>
+              <td id="Fri"></td>
+              <td id="Sat"></td>
+              <td id="Sun"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="assistant-container">
+      <div class="assistant-chat" id="assistantChat" style="display: none">
+        <div class="assistant-header">
+          <span>Study Assistant</span>
+          <i class="fas fa-times" onclick="toggleAssistant()"></i>
+        </div>
+        <div class="assistant-messages" id="assistantMessages">
+          <div class="message assistant-message">
+            Hi there! I'm your study assistant. How can I help you today?
+            <div class="quick-actions">
+              <div
+                class="quick-action"
+                onclick="sendQuickMessage('Help me create a study plan')"
+              >
+                Create study plan
+              </div>
+              <div
+                class="quick-action"
+                onclick="sendQuickMessage('Explain a concept')"
+              >
+                Explain concept
+              </div>
+              <div class="quick-action" onclick="sendQuickMessage('Quiz me')">
+                Quiz me
+              </div>
+              <div
+                class="quick-action"
+                onclick="sendQuickMessage('Summarize notes')"
+              >
+                Summarize notes
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="assistant-input">
+          <input
+            type="text"
+            id="assistantInput"
+            placeholder="Ask me anything..."
+            onkeypress="handleAssistantKeyPress(event)"
+          />
+          <button onclick="sendAssistantMessage()">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+      <div class="assistant-button" onclick="toggleAssistant()">
+        <i class="fas fa-robot" style="font-size: 24px"></i>
+      </div>
+    </div>
+
+    <div class="footer">&copy; 2025 Study Planner. All rights reserved.</div>
+
+    <script>
+      function updateTime() {
+        const now = new Date();
+        document.getElementById(
+          "time"
+        ).textContent = `Current time: ${now.toLocaleTimeString()}`;
+      }
+
+      function addTask() {
+        const input = document.getElementById("taskInput");
+        const date = document.getElementById("taskDate");
+        const time = document.getElementById("taskTime");
+
+        if (!input.value.trim()) {
+          alert("Please enter a task name.");
+          return;
+        }
+
+        if (!date.value) {
+          alert("Please select a due date.");
+          return;
+        }
+
+        const taskItem = document.createElement("li");
+        taskItem.className = "task";
+        taskItem.innerHTML = `
         <span>${input.value}</span>
-        <span class="urgent">${date.value}${time.value ? ' @ ' + time.value : ''}</span>
+        <span class="urgent">${date.value}${
+          time.value ? " @ " + time.value : ""
+        }</span>
       `;
-      document.getElementById("taskList").appendChild(taskItem);
+        document.getElementById("taskList").appendChild(taskItem);
 
-      const dayOfWeek = new Date(date.value).toLocaleDateString("en-US", { weekday: 'short' });
-      const cellId = dayOfWeek.slice(0, 3);
-      const cell = document.getElementById(cellId);
-      if (cell) cell.innerHTML += `<div>${input.value}${time.value ? ' @ ' + time.value : ''}</div>`;
+        const dayOfWeek = new Date(date.value).toLocaleDateString("en-US", {
+          weekday: "short",
+        });
+        const cellId = dayOfWeek.slice(0, 3);
+        const cell = document.getElementById(cellId);
+        if (cell)
+          cell.innerHTML += `<div>${input.value}${
+            time.value ? " @ " + time.value : ""
+          }</div>`;
 
-      input.value = "";
-      date.value = "";
-      time.value = "";
-      document.querySelector('.task-form').style.display = 'none';
-    }
-  </script>
-</body>
+        input.value = "";
+        date.value = "";
+        time.value = "";
+        document.querySelector(".task-form").style.display = "none";
+
+        // New assistant functions
+        function initAssistant() {
+          // Initialize with chat hidden (handled by HTML now)
+        }
+
+        function toggleAssistant() {
+          const chat = document.getElementById("assistantChat");
+          if (chat.style.display === "flex") {
+            chat.style.display = "none";
+          } else {
+            chat.style.display = "flex";
+            // Focus the input when opening
+            document.getElementById("assistantInput").focus();
+          }
+        }
+
+        function sendQuickMessage(message) {
+          document.getElementById("assistantInput").value = message;
+          sendAssistantMessage();
+        }
+
+        function handleAssistantKeyPress(e) {
+          if (e.key === "Enter") {
+            sendAssistantMessage();
+          }
+        }
+
+        function sendAssistantMessage() {
+          const input = document.getElementById("assistantInput");
+          const message = input.value.trim();
+
+          if (!message) return;
+
+          // Add user message to chat
+          addMessage(message, "user");
+          input.value = "";
+
+          // Process message and generate response (simplified for demo)
+          setTimeout(() => {
+            const response = generateAssistantResponse(message);
+            addMessage(response, "assistant");
+          }, 500);
+        }
+
+        function addMessage(text, sender) {
+          const messagesDiv = document.getElementById("assistantMessages");
+          const messageDiv = document.createElement("div");
+          messageDiv.className = `message ${sender}-message`;
+          messageDiv.textContent = text;
+          messagesDiv.appendChild(messageDiv);
+          messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function generateAssistantResponse(message) {
+          // In a real app, you would connect to an AI API here
+          // This is a simple mock response system
+          message = message.toLowerCase();
+
+          if (message.includes("plan") || message.includes("schedule")) {
+            return "I can help you create a study plan. First, tell me what subjects you need to cover and your deadline.";
+          } else if (
+            message.includes("explain") ||
+            message.includes("concept")
+          ) {
+            return "Sure! What concept would you like me to explain? I can break it down simply or provide detailed examples.";
+          } else if (message.includes("quiz") || message.includes("test")) {
+            return "Let's test your knowledge! What subject would you like a quiz on?";
+          } else if (
+            message.includes("summarize") ||
+            message.includes("notes")
+          ) {
+            return "Paste your notes here and I'll create a concise summary with key points.";
+          } else {
+            return "I'm here to help with your studies. You can ask me to explain concepts, create study plans, quiz you, or summarize notes. What would you like help with?";
+          }
+        }
+      }
+    </script>
+  </body>
 </html>
