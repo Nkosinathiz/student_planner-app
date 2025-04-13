@@ -15,6 +15,7 @@ The goal is to provide a **personal digital assistant** that integrates **task t
 
 ## 🚀 Features Implemented
 
+✅ Login/Sign-up page with NO basic authentication (username: admin, password: admin)
 ✅ Dashboard displaying upcoming tasks and weekly planner  
 ✅ Smart task creation with optional due time  
 ✅ Dynamic calendar reflecting added tasks  
@@ -23,8 +24,9 @@ The goal is to provide a **personal digital assistant** that integrates **task t
 ✅ Navigation bar (Home, Notes, About Us, Contact Us)  
 ✅ Footer with branding  
 
+
 ## 🚀 Features Yet To Be Implemented
-✅ Login/Sign-up page with basic authentication (username: admin, password: admin)
+
 ✅ About Us and Contact Us pages
 
 
